@@ -4,3 +4,4 @@
 add_executable (MandelbrotViewer "MandelbrotViewer.cpp" "MandelbrotViewer.h")
 
 # TODO: Add tests and install targets if needed.
+target_link_libraries (MandelbrotViewer glfw)
