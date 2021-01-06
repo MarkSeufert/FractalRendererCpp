@@ -1,9 +1,9 @@
-#include "ColoringInterface.h"
+#include "Renderer/ColoringInterface.h"
 
 /*
 This class defines a coloring scheme that renders the fractal in a blueish color with a black core.
 */
-class ColoringBlue : public ColoringInterface
+class Blue : public ColoringInterface
 {
 	void GetColor(double iterationRatio, double& r, double& g, double& b) override
 	{

@@ -1,0 +1,3 @@
+/*
+This class creates an interface that a fractal implementation must follow.
+*/

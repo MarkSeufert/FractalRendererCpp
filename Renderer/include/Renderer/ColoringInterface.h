@@ -1,5 +1,5 @@
 /*
-This class creates an interface that users can extend from to create their own coloring schemes.
+This class creates an interface that is used to create custom coloring schemes.
 */
 
 class ColoringInterface
