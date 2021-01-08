@@ -3,8 +3,8 @@
 #include "Renderer/FractalInterface.h"
 
 /*
-This file contains the mathematical implementation of the burning ship fractal.
-For more details of how this algorithm works, reading this is helpful: https://en.wikipedia.org/wiki/Burning_Ship_fractal
+This file contains the mathematical implementation of the mandelbrot set.
+For more details of how this algorithm works, reading this is helpful: https://simple.wikipedia.org/wiki/Mandelbrot_set
 */
 
 class Mandelbrot : public FractalInterface
@@ -21,13 +21,13 @@ public:
 			znplus1_imag = 2 * zn_real * zn_imag + imaginary;
 
 			// Check if the magnitude of zn+1 is greater than 2
-			// Which is equal to the square magnitude is greater than 4 (more efficient)
+			// Which is equal to if the square magnitude is greater than 4 (more efficient)
 			if ((znplus1_real * znplus1_real) + (znplus1_imag * znplus1_imag) > 4) {
 				return i / maxIterations_;
 			}
 		}
 
-		// If after maxIterations, the point did not return, it is in the set
+		// If after maxIterations the point did not return, it is in the set
 		return 1;
 	}
 };

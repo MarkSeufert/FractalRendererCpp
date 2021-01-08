@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 This class creates an interface that a fractal implementation must follow.
 */
@@ -20,6 +22,6 @@ public:
 		maxIterations_ = maxIterations;
 	}
 
-private:
+protected:
 	int maxIterations_ = 100;
 };

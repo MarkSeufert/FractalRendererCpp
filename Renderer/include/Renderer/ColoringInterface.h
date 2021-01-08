@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 This class creates an interface that is used to create custom coloring schemes.
 */

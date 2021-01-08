@@ -3,33 +3,32 @@
 #include <iostream>
 #include "GLFW/glfw3.h"
 #include "ColoringSchemes/Blue.h"
+#include "Fractals/Mandelbrot.h"
+#include "Renderer/Renderer.h"
 
 using namespace std;
 
 int main()
 {
-	if (!glfwInit()) {
-		cout << "GLFW was not initialized properly" << endl;
-		return -1;
-	}
+	// Set the window's width and height if they are passed as command line arguments
+	int windowWidth = 1200;
+	int windowHeight = 800;
+	// TODO: Add argc and argv command line arg functionality
 
-	// Delete this later, testing color interface
-	ColoringInterface* coloringScheme = new Blue;
-	double r, g, b;
-	coloringScheme->GetColor(0.9, r, g, b);
-	cout << "Returned color: (" << r << ", " << g << ", " << b << ") " << endl;
-	delete coloringScheme;
+	// Create a fractal renderer window with a passed width and height
+	Renderer renderer(windowWidth, windowHeight, "Mandelbrot Viewer");
 
-	GLFWwindow* window = glfwCreateWindow(1600, 900, "Mandelbrot Viewer", nullptr, nullptr);
-	if (!window)
+	// Set the render's fractal to the mandelbrot set
+	renderer.SetFractal(new Mandelbrot());
+
+	// Set the coloring scheme to blue
+	renderer.SetColorScheme(new Blue());
+
+	// Continuously render the fractal
+	while (true)
 	{
-		cout << "Window was not created properly" << endl;
-		glfwTerminate();
-		return -1;
+		renderer.Draw();
 	}
 
-	glfwMakeContextCurrent(window);
-
-	while (true) {}
 	return 0;
 }
