@@ -2,12 +2,8 @@
 include_directories(${CMAKE_SOURCE_DIR}/ColoringSchemes/include)
 include_directories(${CMAKE_SOURCE_DIR}/Fractals/include)
 
+# Link the Renderer library
+link_libraries(Renderer_library)
+
 # Add source to this project's executable
 add_executable (MandelbrotViewer "MandelbrotViewer.cpp")
-
-# Link the Renderer
-target_link_libraries(MandelbrotViewer 
-	Renderer_library 
-	glfw
-	libglew_static
-)

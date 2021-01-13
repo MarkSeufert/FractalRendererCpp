@@ -7,6 +7,15 @@ class Blue : public ColoringInterface
 {
 	void GetColor(double iterationRatio, double& r, double& g, double& b) override
 	{
+		if (iterationRatio == 1)
+		{
+			r = 0;
+			g = 0;
+			b = 0;
+			return;
+		}
+
+		iterationRatio = 1 - iterationRatio;
 		// Square the iterationRatio to skew it towards 0, which emphasizes the coloring near 0
 		iterationRatio = iterationRatio * iterationRatio;
 

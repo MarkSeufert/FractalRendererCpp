@@ -54,7 +54,7 @@ private:
 	double centerImaginary_ = 0;
 
 	// The real value that corresponds to the width of the window
-	double widthReal_ = 2;
+	double widthReal_ = 3;
 
 	// The fractal to render
 	FractalInterface* fractal_;
