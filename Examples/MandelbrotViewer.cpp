@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include <iostream>
-#include "GLFW/glfw3.h"
 #include "ColoringSchemes/Blue.h"
 #include "Fractals/Mandelbrot.h"
 #include "Renderer/Renderer.h"
@@ -22,13 +21,10 @@ int main()
 	renderer.SetFractal(new Mandelbrot());
 
 	// Set the coloring scheme to blue
-	renderer.SetColorScheme(new Blue());
+	renderer.SetColorScheme(new Blue()); 
 
 	// Continuously render the fractal
-	while (true)
-	{
-		renderer.Draw();
-	}
+	while (renderer.Draw()) { }
 
 	return 0;
 }

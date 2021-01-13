@@ -9,4 +9,5 @@ add_executable (MandelbrotViewer "MandelbrotViewer.cpp")
 target_link_libraries(MandelbrotViewer 
 	Renderer_library 
 	glfw
+	libglew_static
 )

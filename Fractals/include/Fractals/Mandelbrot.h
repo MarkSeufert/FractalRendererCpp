@@ -2,11 +2,6 @@
 
 #include "Renderer/FractalInterface.h"
 
-/*
-This file contains the mathematical implementation of the mandelbrot set.
-For more details of how this algorithm works, reading this is helpful: https://simple.wikipedia.org/wiki/Mandelbrot_set
-*/
-
 class Mandelbrot : public FractalInterface
 {
 public:
@@ -20,9 +15,13 @@ public:
 			znplus1_real = (zn_real * zn_real) - (zn_imag * zn_imag) + real;
 			znplus1_imag = 2 * zn_real * zn_imag + imaginary;
 
-			// Check if the magnitude of zn+1 is greater than 2
+			// Set zn equal to zn+1
+			zn_real = znplus1_real;
+			zn_imag = znplus1_imag;
+
+			// Check if the magnitude of zn is greater than 2
 			// Which is equal to if the square magnitude is greater than 4 (more efficient)
-			if ((znplus1_real * znplus1_real) + (znplus1_imag * znplus1_imag) > 4) {
+			if ((zn_real * zn_real) + (zn_imag * zn_imag) > 4) {
 				return i / maxIterations_;
 			}
 		}

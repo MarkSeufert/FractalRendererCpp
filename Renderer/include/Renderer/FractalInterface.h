@@ -8,7 +8,7 @@ class FractalInterface
 {
 public:
 	/*
-	Calculates this fractal's algorithm given a (real,imaginary) point. Must return a value 
+	Calculates this fractal's algorithm given a (real,imaginary) point. Must return a value
 	between 0 and 1, where a value closer to 1 means closer to being inside the fractal. A value
 	equal to 1 means the point is inside the set.
 	*/
