@@ -1,5 +1,6 @@
 #include "Renderer/Renderer.h"
 
+#include <thread>
 #include <iostream>
 using namespace std;
 
@@ -40,50 +41,41 @@ Renderer::Renderer(int windowWidth, int windowHeight, const char* name)
 	glfwMakeContextCurrent(window_);
 }
 
-void Renderer::SetFractal(FractalInterface* fractal)
-{
-	fractal_ = fractal;
-}
-
-void Renderer::SetColorScheme(ColoringInterface* colorScheme)
-{
-	colorScheme_ = colorScheme;
-}
-
 bool Renderer::Draw()
 {
-	// Calculate the min real/imaginary and max real/imaginary points to display on the screen
-	double minReal = centerReal_ - widthReal_ / 2;
-	double maxReal = centerReal_ + widthReal_ / 2;
-	double minImaginary = centerImaginary_ - (widthReal_ * aspectRatio_ / 2);
-	double maxImaginary = centerImaginary_ + (widthReal_ * aspectRatio_ / 2);
+	// Create numThreads_ to calculate the mandelbrot set in parallel
+	thread* fractalThreads = new thread[numThreads_];
 
-	// Calculate the increment distance between consecutive real/imaginary pixels
-	double realIncrement = (maxReal - minReal) / windowWidth_;
-	double imaginaryIncrement = (maxImaginary - minImaginary) / windowHeight_;
+	// Spawn the threads with parameters corresponding to different sections of the fractal
+	for (int i = 0; i < numThreads_; i++)
+	{
+		fractalThreads[i] = std::thread(&Renderer::ComputeFractalSegment, this, i);
+	}
+
+	// Wait for all the threads to finish computing
+	for (size_t i = 0; i < numThreads_; i++)
+		fractalThreads[i].join();
 
 	// Set up the OpenGL screen to world mapping
 	glLoadIdentity();
-	glOrtho(minReal, maxReal, maxImaginary, minImaginary, 0, 1);
-	glColor3f(0.8f, 0.8f, 0.8f); //Set the color of the line to grey
+	glOrtho(0, windowWidth_, windowHeight_, 0, 0, 1);
 	glPointSize(1); //Set the size of the pixel we are drawing to 1
 	glBegin(GL_POINTS);
 
 	// Iterate through all the points on the screen
-	for (double x = minReal; x < maxReal; x += realIncrement)
+	for (int x = 0; x < windowWidth_; x++)
 	{
-		for (double y = minImaginary; y < maxImaginary; y += imaginaryIncrement)
+		for (int y = 0; y < windowHeight_; y++)
 		{
-			// Get the mandelbrot result at this point
-			double result = fractal_->Evaluate(x, y);
 			// Get the RGB to color this point
 			double r, g, b;
-			colorScheme_->GetColor(result, r, g, b);
+			colorScheme_->GetColor(fractalMemory_[x][y], r, g, b);
 
 			glColor3f(r, g, b);
 			glVertex2f(x, y);
 		}
 	}
+	
 	glEnd();
 	
 	// Double buffer
@@ -96,4 +88,25 @@ bool Renderer::Draw()
 	if (glfwWindowShouldClose(window_))
 		return false;
 	return true;
+}
+
+void Renderer::ComputeFractalSegment(int offset)
+{
+	// Calculate the min real/imaginary and max real/imaginary points to display on the screen
+	double minReal = centerReal_ - widthReal_ / 2;
+	double minImaginary = centerImaginary_ - (widthReal_ * aspectRatio_ / 2);
+
+	// Calculate the distance between consecutive real/imaginary pixels
+	double realIncrement = widthReal_ / windowWidth_;
+	double imaginaryIncrement = widthReal_ * aspectRatio_ / windowHeight_;
+
+	// Iterate through all the points on the screen
+	for (int x = offset; x < windowWidth_; x += numThreads_)
+	{
+		for (int y = 0; y < windowHeight_; y++)
+		{
+			// Get the mandelbrot result at this point
+			fractalMemory_[x][y] = fractal_->Evaluate(minReal + x * realIncrement, minImaginary + y * imaginaryIncrement);
+		}
+	}
 }

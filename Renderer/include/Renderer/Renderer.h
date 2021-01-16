@@ -25,12 +25,17 @@ public:
 	/*
 	Sets the fractal that will be rendered
 	*/
-	void SetFractal(FractalInterface* fractal);
+	void SetFractal(FractalInterface* fractal) { fractal_ = fractal; }
 
 	/*
 	Sets the coloring scheme that will be used to render the fractal
 	*/
-	void SetColorScheme(ColoringInterface* colorScheme);
+	void SetColorScheme(ColoringInterface* colorScheme) { colorScheme_ = colorScheme; }
+
+	/*
+	Sets the number of threads that will be used to calculate the fractal
+	*/
+	void SetNumberThreads(int numThreads) { numThreads_ = numThreads; }
 
 	/*
 	Draws the fractal to the OpenGL window and uses any mouse inputs to update the drawing.
@@ -39,6 +44,11 @@ public:
 	bool Draw();
 
 private:
+	/*
+	Calculates a segment of the fractal, and saves it in fractalMemory_
+	*/
+	void ComputeFractalSegment(int offset);
+
 	// The OpenGL window
 	GLFWwindow* window_;
 
@@ -50,11 +60,11 @@ private:
 	double aspectRatio_;
 
 	// The real/imaginary point that corresponds to the center of the window
-	double centerReal_ = -0.5;
+	double centerReal_ = 0;
 	double centerImaginary_ = 0;
 
 	// The real value that corresponds to the width of the window
-	double widthReal_ = 3;
+	double widthReal_ = 4;
 
 	// The fractal to render
 	FractalInterface* fractal_;
@@ -62,6 +72,9 @@ private:
 	// The coloring scheme to color the fractal with
 	ColoringInterface* colorScheme_;
 
-	// Memory to store the fractal information
+	// Memory used by the threads to store the fractal information
 	double** fractalMemory_;
+
+	// The number of threads to use for computation, by default 8
+	int numThreads_ = 8;
 };

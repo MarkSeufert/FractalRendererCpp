@@ -4,6 +4,7 @@
 #include "ColoringSchemes/Blue.h"
 #include "Fractals/Mandelbrot.h"
 #include "Renderer/Renderer.h"
+#include <chrono>
 
 using namespace std;
 
@@ -24,7 +25,11 @@ int main()
 	renderer.SetColorScheme(new Blue()); 
 
 	// Continuously render the fractal
-	while (renderer.Draw()) { }
+	auto timeInterval = chrono::steady_clock::now();
+	while (renderer.Draw()) {
+		cout << "Time(s): " << chrono::duration_cast<chrono::milliseconds>(chrono::steady_clock::now() - timeInterval).count() / (1000.0) << endl;
+		timeInterval = chrono::steady_clock::now();
+	}
 
 	return 0;
 }
