@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <iostream>
-#include "ColoringSchemes/Blue.h"
+#include "ColoringSchemes/Linear.h"
 #include "Fractals/Mandelbrot.h"
 #include "Renderer/Renderer.h"
 #include <chrono>
@@ -22,7 +22,7 @@ int main()
 	renderer.SetFractal(new Mandelbrot());
 
 	// Set the coloring scheme to blue
-	renderer.SetColorScheme(new Blue()); 
+	renderer.SetColorScheme(new Linear());
 
 	// Continuously render the fractal
 	auto timeInterval = chrono::steady_clock::now();
