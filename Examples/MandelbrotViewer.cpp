@@ -11,8 +11,8 @@ using namespace std;
 int main()
 {
 	// Set the window's width and height if they are passed as command line arguments
-	int windowWidth = 1200;
-	int windowHeight = 800;
+	int windowWidth = 1280;
+	int windowHeight = 720;
 	// TODO: Add argc and argv command line arg functionality
 
 	// Create a fractal renderer window with a passed width and height

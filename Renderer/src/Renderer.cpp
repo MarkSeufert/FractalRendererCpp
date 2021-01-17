@@ -39,14 +39,24 @@ Renderer::Renderer(int windowWidth, int windowHeight, const char* name)
 
 	// Make this window appear in front of all other windows
 	glfwMakeContextCurrent(window_);
+
+	// Set up the OpenGL screen to world mapping
+	glLoadIdentity();
+	glOrtho(0, windowWidth_, windowHeight_, 0, 0, 1);
+	glPointSize(1); //Set the size of the pixel we are drawing to 1
+
+	// Set up the callbacks for user inputs
+	glfwSetMouseButtonCallback(window_, UserInputs::MouseCallback);
+	glfwSetScrollCallback(window_, UserInputs::ScrollCallback);
 }
 
 bool Renderer::Draw()
 {
-	// Create numThreads_ to calculate the mandelbrot set in parallel
-	thread* fractalThreads = new thread[numThreads_];
-
+	/*
+	Create numThreads_ to calculate the fractal in parallel
+	*/
 	// Spawn the threads with parameters corresponding to different sections of the fractal
+	thread* fractalThreads = new thread[numThreads_];
 	for (int i = 0; i < numThreads_; i++)
 	{
 		fractalThreads[i] = std::thread(&Renderer::ComputeFractalSegment, this, i);
@@ -56,26 +66,23 @@ bool Renderer::Draw()
 	for (size_t i = 0; i < numThreads_; i++)
 		fractalThreads[i].join();
 
-	// Set up the OpenGL screen to world mapping
-	glLoadIdentity();
-	glOrtho(0, windowWidth_, windowHeight_, 0, 0, 1);
-	glPointSize(1); //Set the size of the pixel we are drawing to 1
-	glBegin(GL_POINTS);
-
+	/*
+	Render the results from the threads to the screen
+	*/
 	// Iterate through all the points on the screen
+	glBegin(GL_POINTS);
+	double r, g, b;
 	for (int x = 0; x < windowWidth_; x++)
 	{
 		for (int y = 0; y < windowHeight_; y++)
 		{
 			// Get the RGB to color this point
-			double r, g, b;
 			colorScheme_->GetColor(fractalMemory_[x][y], r, g, b);
 
 			glColor3f(r, g, b);
 			glVertex2f(x, y);
 		}
 	}
-	
 	glEnd();
 	
 	// Double buffer
@@ -84,7 +91,34 @@ bool Renderer::Draw()
 	//Poll for events, required to not stall the CPU
 	glfwPollEvents();
 
-	// Check if the user clicked the close window button
+	/*
+	Handle inputs from the user
+	*/
+	// Handle moving the center of the fractal when the mouse button is down
+	static double oldMouseX, oldMouseY;
+	double mouseX, mouseY;
+	glfwGetCursorPos(window_, &mouseX, &mouseY);
+	if (UserInputs::IsMouseButtonDown())
+	{
+		// Update the center of the fractal from the mouse's x diff and y diff
+		double changeInPositionX = (mouseX - oldMouseX) / windowWidth_;
+		double changeInPositionY = (mouseY - oldMouseY) / windowHeight_;
+
+		centerReal_ -= changeInPositionX * widthReal_;
+		centerImaginary_ -= changeInPositionY * widthReal_ * aspectRatio_;
+	}
+	oldMouseX = mouseX;
+	oldMouseY = mouseY;
+
+	// Handle scrolling in and out of the fractal
+	double zoomAmount = 1 - (UserInputs::ScrollWheelValue() * 0.1);
+	widthReal_ *= zoomAmount;
+	UserInputs::ResetScrollWheel(); // Set the scrollwheel value back to 0
+
+
+	/*
+	Return true or false based off whether the user clicked the close window button
+	*/
 	if (glfwWindowShouldClose(window_))
 		return false;
 	return true;

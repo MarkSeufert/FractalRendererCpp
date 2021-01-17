@@ -2,6 +2,7 @@
 
 #include "FractalInterface.h"
 #include "ColoringInterface.h"
+#include "UserInputs.h"
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
@@ -63,7 +64,7 @@ private:
 	double centerReal_ = 0;
 	double centerImaginary_ = 0;
 
-	// The real value that corresponds to the width of the window
+	// The real value that corresponds to the width of the window, by default 4
 	double widthReal_ = 4;
 
 	// The fractal to render
