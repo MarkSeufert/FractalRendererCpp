@@ -1,6 +1,6 @@
 # Fractal Renderer for C++
 An interactive fractal viewer built in C++.
-![A Rendering of the Mandelbrot set](https://drive.google.com/uc?id=12cN-74PhcpFSjAJJaOJD-igUkjRrYmeP)
+![A Rendering of the Mandelbrot set](https://drive.google.com/uc?id=1D9b8U0TuQO6sJ1WqAlbObbn7DW_RRRhE)
 
 ## Features:
   - Cross platform. Uses CMake such that it can be built on Windows, Mac, and Linux.
