@@ -7,7 +7,7 @@ class Blue : public ColoringInterface
 {
 	void GetColor(double iterationRatio, double& r, double& g, double& b) override
 	{
-		if (iterationRatio == 1)
+		if (iterationRatio >= 0.99)
 		{
 			r = 0;
 			g = 0;

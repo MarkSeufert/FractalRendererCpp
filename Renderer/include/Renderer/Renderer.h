@@ -57,25 +57,28 @@ private:
 	int windowWidth_ = 0;
 	int windowHeight_ = 0;
 
-	// The aspect ratio of the window
+	// The aspect ratio of the window (windowHeight_ / windowWidth_)
 	double aspectRatio_;
 
-	// The real/imaginary point that corresponds to the center of the window
+	// The real/imaginary point that corresponds to the center of the window, by default 0 + 0i
 	double centerReal_ = 0;
 	double centerImaginary_ = 0;
 
-	// The real value that corresponds to the width of the window, by default 4
+	// The range of real values to render, by default from -2 to 2 (width of 4)
 	double widthReal_ = 4;
+
+	// The number of threads to use for computation, by default 8
+	int numThreads_ = 8;
+
+	// Memory that the threads store the fractal information inside of
+	double** fractalMemory_;
+
+	// Memory that the threads store their smallest mandelbrot value inside of (used for stretching)
+	double* smallestValueFromThread_;
 
 	// The fractal to render
 	FractalInterface* fractal_;
 
 	// The coloring scheme to color the fractal with
 	ColoringInterface* colorScheme_;
-
-	// Memory used by the threads to store the fractal information
-	double** fractalMemory_;
-
-	// The number of threads to use for computation, by default 8
-	int numThreads_ = 8;
 };

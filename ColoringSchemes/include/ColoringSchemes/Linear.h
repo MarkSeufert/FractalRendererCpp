@@ -7,10 +7,10 @@ https://stackoverflow.com/questions/16500656/which-color-gradient-is-used-to-col
 class Linear : public ColoringInterface
 {
 public:
-	const double positions[6] = {       0,      0.16,      0.42,    0.6425,    0.8575,       1 };
-	const double red[6]       = {   0 / 255.0,  32 / 255.0, 237 / 255.0, 255.0 / 255.0, 0 / 255.0, 0 };
-	const double green[6]     = {   7 / 255.0, 107 / 255.0, 255.0 / 255.0, 170 / 255.0, 2 / 255.0, 0 };
-	const double blue[6]      = { 100 / 255.0, 203 / 255.0, 255.0 / 255.0,   0 / 255.0, 0 / 255.0, 0 };
+	const double positions[6] = {           0,        0.16,          0.42,        0.6425,      0.8575, 1 };
+	const double red[6]       = {   0 / 255.0,  32 / 255.0, 237.0 / 255.0, 255.0 / 255.0, 150 / 255.0, 0 };
+	const double green[6]     = {   7 / 255.0, 107 / 255.0, 255.0 / 255.0, 170.0 / 255.0,  32 / 255.0, 0 };
+	const double blue[6]      = { 100 / 255.0, 203 / 255.0, 255.0 / 255.0,     0 / 255.0,   0 / 255.0, 0 };
 	void GetColor(double iterationRatio, double& r, double& g, double& b) override
 	{
 		// Find the two positions that the iterationRatio lies between

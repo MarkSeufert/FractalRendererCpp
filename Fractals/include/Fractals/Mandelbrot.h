@@ -2,6 +2,11 @@
 
 #include "Renderer/FractalInterface.h"
 
+/*
+This class contains the mathematical implementation of the mandelbrot set.
+For more details about this fractal, see: https://en.wikipedia.org/wiki/Mandelbrot_set
+*/
+
 class Mandelbrot : public FractalInterface
 {
 public:

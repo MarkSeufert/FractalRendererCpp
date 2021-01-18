@@ -17,6 +17,7 @@ Renderer::Renderer(int windowWidth, int windowHeight, const char* name)
 	{
 		fractalMemory_[i] = new double[windowHeight_];
 	}
+	smallestValueFromThread_ = new double[numThreads_];
 
 	// Initialize GLFW
 	if (!glfwInit()) {
@@ -48,6 +49,7 @@ Renderer::Renderer(int windowWidth, int windowHeight, const char* name)
 	// Set up the callbacks for user inputs
 	glfwSetMouseButtonCallback(window_, UserInputs::MouseCallback);
 	glfwSetScrollCallback(window_, UserInputs::ScrollCallback);
+	glfwSetKeyCallback(window_, UserInputs::KeyboardCallback);
 }
 
 bool Renderer::Draw()
@@ -67,17 +69,29 @@ bool Renderer::Draw()
 		fractalThreads[i].join();
 
 	/*
+	Get the smallest value found from the threads
+	*/
+	double smallest = 1;
+	for (int i = 0; i < numThreads_; i++)
+	{
+		if (smallestValueFromThread_[i] < smallest)
+			smallest = smallestValueFromThread_[i];
+	}
+	// Calculate the amount to scale each value by
+	double scale = 1.0 / (1.0 - smallest);
+
+
+	/*
 	Render the results from the threads to the screen
 	*/
-	// Iterate through all the points on the screen
 	glBegin(GL_POINTS);
 	double r, g, b;
 	for (int x = 0; x < windowWidth_; x++)
 	{
 		for (int y = 0; y < windowHeight_; y++)
 		{
-			// Get the RGB to color this point
-			colorScheme_->GetColor(fractalMemory_[x][y], r, g, b);
+			// Scale the point between 0 and 1, then get the RGB to color it
+			colorScheme_->GetColor((fractalMemory_[x][y] - smallest) * scale, r, g, b);
 
 			glColor3f(r, g, b);
 			glVertex2f(x, y);
@@ -113,9 +127,26 @@ bool Renderer::Draw()
 	// Handle scrolling in and out of the fractal
 	double zoomAmount = 1 - (UserInputs::ScrollWheelValue() * 0.1);
 	widthReal_ *= zoomAmount;
-	UserInputs::ResetScrollWheel(); // Set the scrollwheel value back to 0
 
+	// Handle 'q' and 'w' inputs for increasing/decreasing iterations
+	char keyboard = UserInputs::GetKeyboardValue();
+	static double iterationMultiplier = 1;
+	if (keyboard == 'Q')
+		iterationMultiplier *= 1.25;
+	if (keyboard == 'W')
+		iterationMultiplier /= 1.25;
+	fractal_->SetMaxIterations(iterationMultiplier * 15 * pow(log10(windowWidth_ / widthReal_), 1.8));
 
+	// Handle 'r' input for resetting the fractal
+	if (keyboard == 'R')
+	{
+		centerReal_ = 0;
+		centerImaginary_ = 0;
+		widthReal_ = 4;
+
+		iterationMultiplier = 1;
+	}
+	
 	/*
 	Return true or false based off whether the user clicked the close window button
 	*/
@@ -126,7 +157,7 @@ bool Renderer::Draw()
 
 void Renderer::ComputeFractalSegment(int offset)
 {
-	// Calculate the min real/imaginary and max real/imaginary points to display on the screen
+	// Calculate the min real/imaginary points to display on the screen
 	double minReal = centerReal_ - widthReal_ / 2;
 	double minImaginary = centerImaginary_ - (widthReal_ * aspectRatio_ / 2);
 
@@ -135,12 +166,20 @@ void Renderer::ComputeFractalSegment(int offset)
 	double imaginaryIncrement = widthReal_ * aspectRatio_ / windowHeight_;
 
 	// Iterate through all the points on the screen
+	double result; // Used to store intermediate result
+	double smallestValue = 1; // Used to store the smallest value found
 	for (int x = offset; x < windowWidth_; x += numThreads_)
 	{
 		for (int y = 0; y < windowHeight_; y++)
 		{
 			// Get the mandelbrot result at this point
-			fractalMemory_[x][y] = fractal_->Evaluate(minReal + x * realIncrement, minImaginary + y * imaginaryIncrement);
+			result = fractal_->Evaluate(minReal + x * realIncrement, minImaginary + y * imaginaryIncrement);
+			fractalMemory_[x][y] = result;
+			if (result < smallestValue)
+				smallestValue = result;
 		}
 	}
+
+	// Store the smallest value found inside memory
+	smallestValueFromThread_[offset] = smallestValue;
 }

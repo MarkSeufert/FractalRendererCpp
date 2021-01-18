@@ -6,8 +6,9 @@
 /*
 Global variables to store the information from the callbacks
 */
-static bool mouseButtonDown_; // Whether the left mouse button is currently pressed down
-static double scrollWheel_; // The value read from the mouse's scrollwheel
+static bool mouseButtonDown_ = false; // Whether the left mouse button is currently pressed down
+static double scrollWheel_ = 0; // The value read from the mouse's scrollwheel
+static char keyboardInput_ = 0; // Any key read from the keyboard
 
 /*
 This class defines static functions to be used as callback functions for all user inputs.
@@ -44,17 +45,37 @@ public:
 	}
 
 	/*
+	The callback function for when a keyboard key is pressed
+	*/
+	static void KeyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		if (action == GLFW_PRESS)
+			keyboardInput_ = (char) key;
+	}
+
+	/*
 	Returns whether the mouse's left button is clicked
 	*/
 	static bool IsMouseButtonDown() { return mouseButtonDown_; }
 
 	/*
-	Returns the scrollwheel value from the mouse
+	Returns the scrollwheel value from the mouse, and set it to zero
 	*/
-	static double ScrollWheelValue() { return scrollWheel_; }
+	static double ScrollWheelValue() 
+	{
+		double scrollWheel_tmp = scrollWheel_;
+		scrollWheel_ = 0;
+		return scrollWheel_tmp;
+	}
 
 	/*
-	Resets the scrollwheel value back to 0
+	Returns the last key press received from the keyboard and clears it.
+	If no last key, returns 0
 	*/
-	static void ResetScrollWheel() { scrollWheel_ = 0; }
+	static char GetKeyboardValue() 
+	{ 
+		char keyboardInput_tmp = keyboardInput_;
+		keyboardInput_ = 0;
+		return keyboardInput_tmp;
+	}
 };
