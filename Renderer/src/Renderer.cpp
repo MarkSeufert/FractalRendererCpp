@@ -90,7 +90,7 @@ bool Renderer::Draw()
 	{
 		for (int y = 0; y < windowHeight_; y++)
 		{
-			// Scale the point between 0 and 1, then get the RGB to color it
+			// Scale the point using the previously found smallest and scale, then get the RGB to color it
 			colorScheme_->GetColor((fractalMemory_[x][y] - smallest) * scale, r, g, b);
 
 			glColor3f(r, g, b);

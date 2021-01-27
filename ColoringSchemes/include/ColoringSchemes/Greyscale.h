@@ -1,27 +1,17 @@
 #include "Renderer/ColoringInterface.h"
 
 /*
-This class defines a coloring scheme that renders the fractal in black and white.
+This class adds a very basic coloring scheme with two color points (black and white).
 */
 class Greyscale : public ColoringInterface
 {
-	void GetColor(double iterationRatio, double& r, double& g, double& b) override
+public:
+	/*
+	The constructor automatically adds color points to the ColoringInterface
+	*/
+	Greyscale()
 	{
-		if (iterationRatio >= 0.99)
-		{
-			r = 0;
-			g = 0;
-			b = 0;
-			return;
-		}
-
-		iterationRatio = 1 - iterationRatio;
-
-		// Square the iterationRatio to skew it towards 0, which emphasizes the coloring near 0
-		iterationRatio = iterationRatio * iterationRatio;
-
-		r = 1 - iterationRatio * 0.9;
-		g = 1 - iterationRatio * 0.9;
-		b = 1 - iterationRatio * 0.9;
+		SetColorPoint(0, 1, 1, 1);
+		SetColorPoint(1, 0, 0, 0);
 	}
 };
