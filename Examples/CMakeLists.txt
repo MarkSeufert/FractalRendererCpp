@@ -5,5 +5,7 @@ include_directories(${CMAKE_SOURCE_DIR}/Fractals/include)
 # Link the Renderer library
 link_libraries(Renderer_library)
 
-# Add source to this project's executable
+# Create an executable for each file in this folder
 add_executable (MandelbrotViewer "MandelbrotViewer.cpp")
+add_executable (JuliaViewer "JuliaViewer.cpp")
+

@@ -47,9 +47,9 @@ Renderer::Renderer(int windowWidth, int windowHeight, const char* name)
 	glPointSize(1); //Set the size of the pixel we are drawing to 1
 
 	// Set up the callbacks for user inputs
-	glfwSetMouseButtonCallback(window_, UserInputs::MouseCallback);
-	glfwSetScrollCallback(window_, UserInputs::ScrollCallback);
-	glfwSetKeyCallback(window_, UserInputs::KeyboardCallback);
+	glfwSetMouseButtonCallback(window_, InputCallbacks::MouseCallback);
+	glfwSetScrollCallback(window_, InputCallbacks::ScrollCallback);
+	glfwSetKeyCallback(window_, InputCallbacks::KeyboardCallback);
 }
 
 bool Renderer::Draw()
@@ -105,6 +105,17 @@ bool Renderer::Draw()
 	//Poll for events, required to not stall the CPU
 	glfwPollEvents();
 
+	// Collect all user inputs from UserInputs.h, and store the information into the Inputs member
+	userInputs_.leftClick = mouseButtonDown_;
+	userInputs_.rightClick = mouseButtonDownR_;
+	userInputs_.latestChar = keyboardInput_;
+	userInputs_.scrollwheel = scrollWheel_;
+	glfwGetCursorPos(window_, &userInputs_.mouseXRaw, &userInputs_.mouseYRaw);
+	userInputs_.mouseX = ((userInputs_.mouseXRaw - (windowWidth_ / 2)) / windowWidth_) * widthReal_ + centerReal_;
+	userInputs_.mouseY = ((userInputs_.mouseYRaw - (windowHeight_ / 2)) / windowHeight_) * (widthReal_ * aspectRatio_) + centerImaginary_;
+	keyboardInput_ = 0;
+	scrollWheel_ = 0;
+
 	/*
 	Handle inputs from the user
 	*/
@@ -112,7 +123,7 @@ bool Renderer::Draw()
 	static double oldMouseX, oldMouseY;
 	double mouseX, mouseY;
 	glfwGetCursorPos(window_, &mouseX, &mouseY);
-	if (UserInputs::IsMouseButtonDown())
+	if (userInputs_.leftClick)
 	{
 		// Update the center of the fractal from the mouse's x diff and y diff
 		double changeInPositionX = (mouseX - oldMouseX) / windowWidth_;
@@ -125,11 +136,11 @@ bool Renderer::Draw()
 	oldMouseY = mouseY;
 
 	// Handle scrolling in and out of the fractal
-	double zoomAmount = 1 - (UserInputs::ScrollWheelValue() * 0.1);
+	double zoomAmount = 1 - (userInputs_.scrollwheel * 0.1);
 	widthReal_ *= zoomAmount;
 
 	// Handle 'q' and 'w' inputs for increasing/decreasing iterations
-	char keyboard = UserInputs::GetKeyboardValue();
+	char keyboard = userInputs_.latestChar;
 	static double iterationMultiplier = 1;
 	if (keyboard == 'Q')
 		iterationMultiplier *= 1.25;

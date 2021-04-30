@@ -2,7 +2,8 @@
 
 #include "FractalInterface.h"
 #include "ColoringInterface.h"
-#include "UserInputs.h"
+#include "InputCallbacks.h" // Remove this from the include folder and put into src
+#include "Inputs.h"
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
@@ -34,24 +35,30 @@ public:
 	void SetColorScheme(ColoringInterface* colorScheme) { colorScheme_ = colorScheme; }
 
 	/*
-	Sets the number of threads that will be used to calculate the fractal
-	*/
-	void SetNumberThreads(int numThreads) { numThreads_ = numThreads; }
-
-	/*
 	Draws the fractal to the OpenGL window and uses any mouse inputs to update the drawing.
 	Returns false if the user clicked the closed window button.
 	*/
 	bool Draw();
 
-private:
 	/*
-	Calculates a segment of the fractal, and saves it in fractalMemory_
+	Sets the number of threads that will be used to calculate the fractal
 	*/
-	void ComputeFractalSegment(int offset);
+	void SetNumberThreads(int numThreads) { numThreads_ = numThreads; }
 
+	/*
+	Returns an object that contains information about user inputs. Useful for custom input logic.
+	*/
+	Inputs* GetInputs() { return &userInputs_; }
+
+private:
 	// The OpenGL window
 	GLFWwindow* window_;
+
+	// The fractal to render
+	FractalInterface* fractal_;
+
+	// The coloring scheme to color the fractal with
+	ColoringInterface* colorScheme_;
 
 	// The width and height of the window, in pixels
 	int windowWidth_ = 0;
@@ -73,12 +80,15 @@ private:
 	// Memory that the threads store the fractal information inside of
 	double** fractalMemory_;
 
-	// Memory that the threads store their smallest mandelbrot value inside of (used for stretching)
+	// Memory that the threads store their smallest mandelbrot value inside of 
+	// (used for normalizing values between 0 and 1)
 	double* smallestValueFromThread_;
 
-	// The fractal to render
-	FractalInterface* fractal_;
+	// Class used for storing all inputs received from user (ex: key presses, mouse position)
+	Inputs userInputs_;
 
-	// The coloring scheme to color the fractal with
-	ColoringInterface* colorScheme_;
+	/*
+	Calculates a segment of the fractal from a thread, and saves it in fractalMemory_
+	*/
+	void ComputeFractalSegment(int offset);
 };

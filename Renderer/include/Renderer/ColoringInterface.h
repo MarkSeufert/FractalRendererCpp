@@ -4,7 +4,7 @@
 
 /*
 This class defines a coloring scheme that renders the fractal linearly between user-defined colors. 
-Several derived classes exist in the ./ColoringSchemes/ folder that already contain the inputed colors.
+Several derived classes exist in the ./ColoringSchemes folder that already contain the inputed colors.
 */
 
 class ColoringInterface
